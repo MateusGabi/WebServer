@@ -2,13 +2,16 @@
 # no diretorio atual
 
 sc = server_concorrente.c
-TARGETS = client servidor server_concorrente
+cl = client.c
+TARGETS = client servidor server server_concorrente
 CFLAGS = -g -O2 -c
 CC = gcc
 
 compile:
-	$(CC) $(sc) -o server
-	@echo Compilado!
+	$(CC) $(sc) -o server 
+	$(CC) $(cl) -o client   
+	java -jar BuilderGen.jar build
+	echo Compilado!
 
 run:
 	./server -f 8080	

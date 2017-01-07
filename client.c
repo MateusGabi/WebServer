@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define SERVER_PORT 9876
+#define SERVER_PORT 8080
 #define MAX_LINE 256
 
 int main(int argc, char * argv[])

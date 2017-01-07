@@ -7,10 +7,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define SERVER_PORT 9876
-
 #define MAX_PENDING 5
-#define MAX_LINE 512
+#define MAX_LINE 256
 
 int main(int argc, char *argv[]) {
     
@@ -62,22 +60,6 @@ void verificadorDeArgumentos(int argc, char *argv[])
      }
     
 } // verificadorDeArgumentos()
-
-char carregarResposta()
-{
-    
-    char resposta[MAX_LINE];
-    
-    strcat(resposta, "HTTP/1.1 404 File Not Found\r\n");
-    strcat(resposta, "Server: FACOM-RC-2016/2.0\r\n");
-    strcat(resposta, "Content-type: text/plain\r\n");
-    strcat(resposta, "“Could not find the specified URL\r\n");
-    
-    resposta[MAX_LINE] = '\0';
-    
-    return resposta;
-    
-} // carregarResposta()
 
 void use_fork(int porta)
 {
@@ -139,6 +121,8 @@ void use_fork(int porta)
                 printf("\n\n--------------------- Resposta do Servidor ------------------\n\n");
                                
                 char resposta[MAX_LINE];
+                
+                resposta[0] = "";
     
                 strcat(resposta, "HTTP/1.1 404 File Not Found\r\n");
                 strcat(resposta, "Server: FACOM-RC-2016/2.0\r\n");
