@@ -2,7 +2,7 @@
 # no diretorio atual
 
 sc = server_concorrente.c
-TARGETS = client server server_concorrente
+TARGETS = client servidor server_concorrente
 CFLAGS = -g -O2 -c
 CC = gcc
 
