@@ -8,7 +8,7 @@
 #include <netdb.h>
 
 #define SERVER_PORT 8080
-#define MAX_LINE 256
+#define MAX_LINE 1024
 
 int main(int argc, char * argv[])
 {

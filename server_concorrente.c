@@ -8,7 +8,7 @@
 #include <netdb.h>
 
 #define MAX_PENDING 5
-#define MAX_LINE 256
+#define MAX_LINE 1024
 
 int main(int argc, char *argv[]) {
     
@@ -65,6 +65,7 @@ void use_fork(int porta)
 {
     struct sockaddr_in sin;
     char buf[MAX_LINE];
+    char resposta[MAX_LINE];
     int len, s, new_s;
 
     /* build address data structure */
@@ -119,15 +120,27 @@ void use_fork(int porta)
                 fputs(buf, stdout);    
                 
                 printf("\n\n--------------------- Resposta do Servidor ------------------\n\n");
-                               
-                char resposta[MAX_LINE];
-                
-                resposta[0] = "";
-    
+
+                for (int i = 0; i < MAX_LINE; ++i)
+                {
+                    resposta[i] = 0;
+                }   
+
+                char mensagem[256];  
+
+                strcpy(mensagem, "<h1>ARQUIVO ZUADO</h1>");  
+
                 strcat(resposta, "HTTP/1.1 404 File Not Found\r\n");
+                strcat(resposta, "Accept: */*\r\n");
+                strcat(resposta, "Date: Mon, 09 Jan 2017 21:33:57 GMT\r\n");
+                strcat(resposta, "Connection: close\r\n");
+                strcat(resposta, "Content-Type: text/html\r\n");
+                strcat(resposta, "Content-Length: ");
+                strcat(resposta, "25");
+                strcat(resposta, "\r\n");
                 strcat(resposta, "Server: FACOM-RC-2016/2.0\r\n");
-                strcat(resposta, "Content-type: text/plain\r\n\r\n");
-                strcat(resposta, "Could not find the specified URL\r\n");
+                strcat(resposta, "\r\n");
+                strcat(resposta, mensagem);
                 
                 resposta[MAX_LINE] = '\0';
                 
@@ -150,6 +163,11 @@ void use_fork(int porta)
     }
     
 } // use_fork()
+
+int fileExists()
+{
+    return 0;
+}
 
 int verificaPorta(int porta)
 {
