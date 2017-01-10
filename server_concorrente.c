@@ -6,9 +6,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <time.h>
 
 #define MAX_PENDING 5
 #define MAX_LINE 1024
+
+typedef const char *string;
 
 int main(int argc, char *argv[]) {
     
@@ -65,7 +68,6 @@ void use_fork(int porta)
 {
     struct sockaddr_in sin;
     char buf[MAX_LINE];
-    char resposta[MAX_LINE];
     int len, s, new_s;
 
     /* build address data structure */
@@ -121,35 +123,47 @@ void use_fork(int porta)
                 
                 printf("\n\n--------------------- Resposta do Servidor ------------------\n\n");
 
-                for (int i = 0; i < MAX_LINE; ++i)
+
+                string status = "HTTP/1.1 400 File Not Found";
+
+                char resposta[MAX_LINE];
+
+                for (int i = 0; i < 125; ++i)
                 {
                     resposta[i] = 0;
-                }   
+                }
 
-                char mensagem[256];  
+                /* configurando hora */
+                time_t rawtime;
+                struct tm *info;
+                char timebuffer[80];
 
-                strcpy(mensagem, "<h1>ARQUIVO ZUADO</h1>");  
+                time(&rawtime);
+                info = localtime(&rawtime);
+                strftime(timebuffer, 80, "%a, %d %b %Y %X %Z", info);
 
-                strcat(resposta, "HTTP/1.1 404 File Not Found\r\n");
+                /* fim da config de hora */
+
+                strcpy(resposta, status);
+                strcat(resposta, "\r\n");
                 strcat(resposta, "Accept: */*\r\n");
-                strcat(resposta, "Date: Mon, 09 Jan 2017 21:33:57 GMT\r\n");
+                strcat(resposta, "Date: ");
+                strcat(resposta, timebuffer);
+                strcat(resposta, "\r\n");
                 strcat(resposta, "Connection: close\r\n");
                 strcat(resposta, "Content-Type: text/html\r\n");
                 strcat(resposta, "Content-Length: ");
-                strcat(resposta, "25");
+                strcat(resposta, "20");
                 strcat(resposta, "\r\n");
                 strcat(resposta, "Server: FACOM-RC-2016/2.0\r\n");
                 strcat(resposta, "\r\n");
-                strcat(resposta, mensagem);
-                
+                strcat(resposta, "<h1>/ IndexOf </h1>");                
                 resposta[MAX_LINE] = '\0';
-                
-    
-                // char resposta = carregarResposta();
+
                 
                 fputs(resposta, stdout);            
                 
-                send(connfd, resposta, sizeof(resposta), 0);       
+                send(connfd, resposta, strlen(resposta), 0);       
             }            
             
             
@@ -164,10 +178,11 @@ void use_fork(int porta)
     
 } // use_fork()
 
-int fileExists()
+string carregarArquivo()
 {
-    return 0;
-}
+    string status = "HTTP/1.1 400 File Not Found"; 
+    return status;
+} // fileExists()
 
 int verificaPorta(int porta)
 {
