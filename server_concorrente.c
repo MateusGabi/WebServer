@@ -10,59 +10,45 @@
 
 #define MAX_PENDING 5
 #define MAX_LINE 1024
+#define SERVER_NAME "FACOM-RC-2016/2.0"
 
 typedef const char *string;
 
 int main(int argc, char *argv[]) {
     
-    /* servidor -f PORTA */
-    verificadorDeArgumentos(argc, argv);  
+    /* verificações */
+    if(argc == 3)
+    {
+       if(strcmp(argv[1], "-f") == 0)
+       {
+           printf("Inicializando servidor na porta %s\n", argv[2]);
 
-    
-} // main()
-
-void verificadorDeArgumentos(int argc, char *argv[])
-{
-     if(argc == 3 )
-     {
-         if(strcmp(argv[1], "-f") == 0)
-         {
-             printf("Inicializando servidor na porta %s\n", argv[2]);
-             
-             int porta = atoi(argv[2]);
-             
-             if(verificaPorta(porta))
-             {
-                 use_fork(porta);
-             }
-             else
-             {
-                 printf("Erro na porta\n");
-             }
-         }
-         else {
-             mostra_erro();
-         }
-     }
-     else if(argc == 4)
-     {
-         if(strcmp(argv[1], "-t") == 0)
-         {
-             printf("Não implementado.");
-         }
-         else {
-             mostra_erro();
-         }
-     }
-     else
-     {
+           int porta = atoi(argv[2]);
+           
+           use_fork(porta);
+       }
+       else {
+           mostra_erro();
+       }
+   }
+   else if(argc == 4)
+   {
+       if(strcmp(argv[1], "-t") == 0)
+       {
+           printf("Não implementado.");
+       }
+       else {
+           mostra_erro();
+       }
+   }
+   else
+   {
         printf("Há dois métodos para inicialização do servidor:\n");
         printf("./servidor -f PORTA\n");
         printf("./servidor -t N PORTA\n"); 
         exit(1);    
-     }
-    
-} // verificadorDeArgumentos()
+    }
+} // main()
 
 void use_fork(int porta)
 {
@@ -92,10 +78,10 @@ void use_fork(int porta)
 
     listen(s, MAX_PENDING);
 
-    /* wait for connection, then receive and print text */
+    /* loop principal */
     while (1) {
 
-        int connfd = accept(s, (struct sockaddr *)&sin, &len); /* blocking call */
+        int connfd = accept(s, (struct sockaddr *)&sin, &len); aceita
 
         if(connfd < 0)
         {
@@ -103,7 +89,7 @@ void use_fork(int porta)
             exit(1);
         }
         else {
-            printf("\n\n------------------ Novo cliente conectado -----------------\n\n");
+            printf("\n\n------------------ Novo cliente conectado -----------------\n");
         }
         
         pid_t pid;
@@ -119,16 +105,24 @@ void use_fork(int porta)
                 
                 printf("\n\n-------------------- Requisição do cliente ------------------\n\n");
                                
-                fputs(buf, stdout);    
+                // fputs(buf, stdout);    
                 
                 printf("\n\n--------------------- Resposta do Servidor ------------------\n\n");
+
+
+                /* leitura de arquivo */
+
+                
+
+                /* fim leitura de arquivo */
 
 
                 string status = "HTTP/1.1 400 File Not Found";
 
                 char resposta[MAX_LINE];
 
-                for (int i = 0; i < 125; ++i)
+                /* limpa buffer */
+                for (int i = 0; i < MAX_LINE; ++i)
                 {
                     resposta[i] = 0;
                 }
@@ -144,6 +138,8 @@ void use_fork(int porta)
 
                 /* fim da config de hora */
 
+                string conteudoHTML = "IndexOf /";    
+
                 strcpy(resposta, status);
                 strcat(resposta, "\r\n");
                 strcat(resposta, "Accept: */*\r\n");
@@ -153,17 +149,20 @@ void use_fork(int porta)
                 strcat(resposta, "Connection: close\r\n");
                 strcat(resposta, "Content-Type: text/html\r\n");
                 strcat(resposta, "Content-Length: ");
-                strcat(resposta, "20");
+                strcat(resposta, "9");
                 strcat(resposta, "\r\n");
-                strcat(resposta, "Server: FACOM-RC-2016/2.0\r\n");
+                strcat(resposta, "Server: ");
+                strcat(resposta, SERVER_NAME);
                 strcat(resposta, "\r\n");
-                strcat(resposta, "<h1>/ IndexOf </h1>");                
-                resposta[MAX_LINE] = '\0';
+                strcat(resposta, "\r\n");
+                strcat(resposta, conteudoHTML);
 
+                strcat(resposta, "\0");
                 
                 fputs(resposta, stdout);            
                 
-                send(connfd, resposta, strlen(resposta), 0);       
+                send(connfd, resposta, strlen(resposta), 0);   
+    
             }            
             
             
@@ -177,19 +176,6 @@ void use_fork(int porta)
     }
     
 } // use_fork()
-
-string carregarArquivo()
-{
-    string status = "HTTP/1.1 400 File Not Found"; 
-    return status;
-} // fileExists()
-
-int verificaPorta(int porta)
-{
-    
-    return porta;   
-    
-} // verificaPorta()
 
 void mostra_erro()
 {
